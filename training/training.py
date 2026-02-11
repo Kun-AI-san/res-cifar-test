@@ -25,6 +25,8 @@ def provide_samples(batch):
         tensor_label_list.append(sample['label'])
     image_batch = torch.stack(tensor_list)
     label_batch = torch.tensor(tensor_label_list).view(len(tensor_label_list))
+    if torch.cuda.is_available():
+        return image_batch.cuda(), label_batch.cuda()
     return image_batch, label_batch
 
 def train(model, args, optimizer):
@@ -57,8 +59,6 @@ def train(model, args, optimizer):
         with torch.no_grad():
             model.eval()
             for image_batch, outputs in test_dataloader:
-                if torch.cuda.is_available():
-                    image_batch, outputs = image_batch.cuda(), outputs.cuda()
                 out = model(image_batch)
                 loss = criterion(out, outputs)
                 # print(out.shape, outputs.shape)
