@@ -128,5 +128,5 @@ if __name__ == "__main__":
         model.load_state_dict(state)
     except Exception as e:
         print("no saved file. continue training from scratch.")
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-5)
     train(model, args, optimizer)
