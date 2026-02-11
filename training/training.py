@@ -72,7 +72,7 @@ def train(model, args, optimizer):
         test_loss_list.append(test_epoch_loss)
         if len(accuracy_list)>0 and (accurate/total) > max(accuracy_list):
             torch.save(model.state_dict(), 'Res14Mod')
-        else:
+        elif len(accuracy_list)==0:
             torch.save(model.state_dict(), 'Res14Mod')
         accuracy_list.append(accurate/total)
         epoch_list.append(i)
