@@ -9,15 +9,25 @@ from torchvision.transforms import v2
 from model.res14 import Res14
 import argparse
 from tqdm import tqdm
+from functools import partial
 import matplotlib.pyplot as plt
 
-def provide_samples(batch):
+def provide_samples(batch, mode):
     # transforms.
-    transform = v2.Compose([
-        v2.ToTensor(),
-        v2.RandomHorizontalFlip(p=0.25),
-        v2.Normalize(mean = [0.49139968, 0.48215827 ,0.44653124], std = [0.24703233, 0.24348505, 0.26158768])
-    ])
+    if mode == "train":
+        transform = v2.Compose([
+            v2.ToImage(), 
+            v2.ToDtype(torch.float32, scale=True),
+            v2.RandomCrop(32, padding=4),
+            v2.RandomHorizontalFlip(p=0.5),
+            v2.Normalize(mean = [0.49139968, 0.48215827 ,0.44653124], std = [0.24703233, 0.24348505, 0.26158768])
+        ])
+    else:
+        transform = v2.Compose([
+            v2.ToImage(), 
+            v2.ToDtype(torch.float32, scale=True),
+            v2.Normalize(mean = [0.49139968, 0.48215827 ,0.44653124], std = [0.24703233, 0.24348505, 0.26158768])
+        ])
     tensor_list = []
     tensor_label_list = []
     for sample in batch:
@@ -40,8 +50,8 @@ def train(model, args, optimizer):
         train_dataset = load_dataset('uoft-cs/cifar10', split='train', streaming=True)
         test_dataset = load_dataset('uoft-cs/cifar10', split='test', streaming=True)
 
-        train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=provide_samples, drop_last=True)
-        test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, collate_fn=provide_samples, drop_last=True)
+        train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=partial(provide_samples, mode='train'), drop_last=True)
+        test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, collate_fn=partial(provide_samples, mode='test'), drop_last=True)
         epoch_loss = 0.0
         test_epoch_loss = 0.0
         model.train()

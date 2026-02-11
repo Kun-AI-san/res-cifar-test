@@ -72,7 +72,3 @@ class Res14(nn.Module):
             out = block(out)
         out = self.avg_pool(out)
         return self.out_linear(out.flatten(1))
-
-
-
-        
