@@ -25,7 +25,7 @@ def provide_samples(batch):
         tensor_label_list.append(sample['label'])
     image_batch = torch.stack(tensor_list)
     label_batch = torch.tensor(tensor_label_list).view(len(tensor_label_list))
-    return image_batch.cuda(), label_batch.cuda()
+    return image_batch, label_batch
 
 def train(model, args, optimizer):
     
@@ -57,6 +57,8 @@ def train(model, args, optimizer):
         with torch.no_grad():
             model.eval()
             for image_batch, outputs in test_dataloader:
+                if torch.cuda.is_available():
+                    image_batch, outputs = image_batch.cuda(), outputs.cuda()
                 out = model(image_batch)
                 loss = criterion(out, outputs)
                 # print(out.shape, outputs.shape)
@@ -107,7 +109,10 @@ if __name__ == "__main__":
         required=True
     )
     args = parser.parse_args()
-    model = Res14().cuda()
+    if torch.cuda.is_available():
+        model = Res14().cuda()
+    else:
+        model = Res14()
     try:
         state = torch.load('./Res14Mod')
         model.load_state_dict(state)
