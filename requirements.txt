@@ -1,5 +1,6 @@
 datasets==4.1.1
 matplotlib==3.10.8
-torch==2.7.1+cu128
-torchvision==0.22.1+cu128
+scikit_learn==1.8.0
+torch==2.7.1
+torchvision==0.22.1
 tqdm==4.67.1
