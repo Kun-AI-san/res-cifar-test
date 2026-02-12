@@ -52,7 +52,7 @@ class Res14(nn.Module):
         ),
         nn.BatchNorm2d(self.channels),
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=self.kernel_size, stride=self.stride)
+        nn.MaxPool2d(kernel_size=self.kernel_size, stride=self.stride*2)
         )
         self.layer1=nn.ModuleList([ResidualBlock() for _ in range(2)])
         self.layer2=nn.ModuleList([ResidualBlock(channels=self.channels*2,to_downsample=True) if i%2==0 else ResidualBlock(channels=self.channels*2) for i in range(2)])
